@@ -29,6 +29,8 @@ public class Ship extends Entity {
 	private boolean imagep;
 	public int imageid;
 
+	private Color baseColor=Color.green;
+
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
@@ -111,11 +113,11 @@ public class Ship extends Entity {
 		if (this.isDestroyed()) {
 			frameCnt++;
 			if (frameCnt % (destructCool * 0.01) == 0) {
-				if (getColor() == Color.GREEN) {
+				if (getColor() == baseColor) {
 					this.spriteType = SpriteType.ShipDestroyed;
 					setColor(Color.red);
 				} else {
-					setColor(Color.GREEN);
+					setColor(baseColor);
 					this.spriteType = SpriteType.Ship;
 				}
 			}
@@ -132,7 +134,7 @@ public class Ship extends Entity {
 			}
 		} else {
 			frameCnt = 0;
-			setColor(Color.GREEN);
+			setColor(baseColor);
 			this.spriteType = SpriteType.Ship;
 		}
 	}
@@ -143,6 +145,10 @@ public class Ship extends Entity {
 	public final void gameOver() {
 		this.setSpriteType(SpriteType.Explosion);
 		this.setColor(Color.MAGENTA);
+	}
+
+	public final void setBaseColor(Color newColor){
+		this.baseColor=newColor;		
 	}
 
 	/**
