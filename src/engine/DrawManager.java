@@ -11,6 +11,14 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 
+
+
+import screen.Screen;
+import screen.GameScreen;
+
+import screen.*;
+import screen.ShopScreen.shopstates;
+
 import screen.*;
 import screen.Screen;
 import screen.GameScreen;
@@ -166,6 +174,10 @@ public final class DrawManager {
 			imagemap.put("bgm1", fileManager.loadImage("bgm_1.png"));
 			imagemap.put("bgm2", fileManager.loadImage("bgm_2.png"));
 			imagemap.put("bgm3", fileManager.loadImage("bgm_3.png"));
+			imagemap.put("item_heart", fileManager.loadImage("heart.png"));
+			imagemap.put("item_bulletspeed", fileManager.loadImage("bulspeed.png"));
+			imagemap.put("item_movespeed", fileManager.loadImage("movspeed.png"));
+
 
 		} catch (IOException e) {
 			logger.warning("Loading failed.");

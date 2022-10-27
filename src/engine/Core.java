@@ -160,6 +160,7 @@ public final class Core {
 	private static final Item Test6 =
 			new Item(2002, "Store BGM 2", 1000);
 
+
 	/**
 	 * Test implementation.
 	 *
@@ -239,11 +240,14 @@ public final class Core {
 				LOGGER.info("Closing title screen.");
 				break;
 			case 2:
+
 				// Game & score
+
 				Scanner sc = new Scanner(System.in);
 				LOGGER.info("Select your difficulty 0 is practice, 1 is easy, 2 is normal, 3 is hard");
 				diff = sc.nextInt();
 				while(diff < 0 || diff > 3){
+					new Sound().backroundmusic();
 					LOGGER.info("Select your difficulty 0 is practice, 1 is easy, 2 is normal, 3 is hard");
 					diff = sc.nextInt();
 				}
@@ -272,6 +276,7 @@ public final class Core {
 
 					} while (gameState.getLivesRemaining() > 0
 							&& gameState.getLevel()%NUM_LEVELS != 0);
+
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " score screen at " + FPS + " fps, with a score of "
 							+ gameState.getScore() + ", "
@@ -283,6 +288,7 @@ public final class Core {
 					LOGGER.info("Closing score screen.");
 				} else {
 					do {
+						new Sound().backroundmusic();
 						// One extra live every few levels.
 						boolean bonusLife = gameState.getLevel()
 								% EXTRA_LIFE_FRECUENCY == 0
@@ -337,7 +343,7 @@ public final class Core {
 				break;
 			case 5:
 				//Store.
-				currentScreen = new StoreScreen(width, height, FPS);
+				currentScreen = new ShopScreen(width, height, FPS, 1);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " store screen at " + FPS + " fps.");
 				returnCode = frame.setScreen(currentScreen);
@@ -353,21 +359,22 @@ public final class Core {
 				LOGGER.info("Closing HUDSetting screen.");
 				break;
 
-          case 400010:
-            // Main menu.
-            /* This makes the old window disappear */
-            frame.setVisible(false);
-            /* This creates a new window with new width & height values */
-            frame = new Frame(WIDTH, HEIGHT);
-            DrawManager.getInstance().setFrame(frame);
-            width = frame.getWidth();
-            height = frame.getHeight();
-            currentScreen = new TitleScreen(width, height, FPS);
-            LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-                + " title screen at " + FPS + " fps.");
-            returnCode = frame.setScreen(currentScreen);
-            LOGGER.info("Closing title screen.");
-            break;
+            case 400010:
+	            // Main menu.
+	            /* This makes the old window disappear */
+	            Frame old_frame = frame;
+	            /* This creates a new window with new width & height values */
+	            frame = new Frame(WIDTH, HEIGHT);
+	            DrawManager.getInstance().setFrame(frame);
+	            width = frame.getWidth();
+	            height = frame.getHeight();
+	            currentScreen = new TitleScreen(width, height, FPS);
+	            old_frame.dispose();
+	            LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+			            + " title screen at " + FPS + " fps.");
+	            returnCode = frame.setScreen(currentScreen);
+	            LOGGER.info("Closing title screen.");
+	            break;
 
 			case 400060:
 				//HelpScreen.
@@ -388,6 +395,8 @@ public final class Core {
 		fileHandler.close();
 		System.exit(0);
 	}
+
+
 
 	/**
 	 * Constructor, not called.

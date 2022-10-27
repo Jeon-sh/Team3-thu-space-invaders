@@ -7,7 +7,10 @@ import java.util.Set;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
+import engine.Sound;
+
 import screen.ShopScreen;
+
 
 /**
  * Implements a ship, to be controlled by the player.
@@ -20,7 +23,7 @@ public class Ship extends Entity {
 	/** Time between shots. */
 	private int SHOOTING_INTERVAL = 750;
 	/** Speed of the bullets shot by the ship. */
-	private static final int BULLET_SPEED = -6;
+	private int BULLET_SPEED = -6;
 
 	/** Movement of the ship for each unit of time. */
 	private int SPEED;
@@ -28,6 +31,7 @@ public class Ship extends Entity {
 
 	private boolean imagep;
 	public int imageid;
+	public int item_number = 0;
 
 	private Color baseColor=Color.green;
 
@@ -35,6 +39,8 @@ public class Ship extends Entity {
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
 	private Cooldown destructionCooldown;
+	/** Item acquire effect duration time. */
+	private Cooldown itemCooldown;
 	/** Movement of the ship for each unit of time. */
 	private int destructCool = 300;
 
@@ -55,6 +61,7 @@ public class Ship extends Entity {
 		imagep = false;
 		this.spriteType = SpriteType.Ship;
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+		this.itemCooldown = Core.getCooldown(300);
 		this.destructionCooldown = Core.getCooldown(destructCool);
 		switch (Core.getDiff()) {
 			case 0:
@@ -71,7 +78,7 @@ public class Ship extends Entity {
 				break;
 		}
 	}
-
+	
 	/**
 	 * Moves the ship speed units right, or until the right screen border is
 	 * reached.
@@ -97,6 +104,8 @@ public class Ship extends Entity {
 	 */
 	public final boolean shoot(final Set<Bullet> bullets) {
 		if (this.shootingCooldown.checkFinished()) {
+
+			new Sound().bulletsound();
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(positionX + this.width / 2,
 					positionY, BULLET_SPEED, 0));
@@ -110,6 +119,10 @@ public class Ship extends Entity {
 	 */
 	private Color[] rainbowEffect = {Color.RED, Color.ORANGE, Color.YELLOW, Color.green, Color.blue, new Color(0, 0, 128), new Color(139, 0, 255)};
 	public final void update() {
+		// Item acquired additional image
+		if (this.itemCooldown.checkFinished()){
+			this.item_number = 0;
+		}
 		if (this.isDestroyed()) {
 			frameCnt++;
 			if (frameCnt % (destructCool * 0.01) == 0) {
@@ -136,6 +149,7 @@ public class Ship extends Entity {
 			frameCnt = 0;
 			setColor(baseColor);
 			this.spriteType = SpriteType.Ship;
+
 		}
 	}
 	public final void getItem() {
@@ -145,6 +159,7 @@ public class Ship extends Entity {
 	public final void gameOver() {
 		this.setSpriteType(SpriteType.Explosion);
 		this.setColor(Color.MAGENTA);
+
 	}
 
 	public final void setBaseColor(Color newColor){
@@ -155,7 +170,10 @@ public class Ship extends Entity {
 	 * Switches the ship to its destroyed state.
 	 */
 	public final void destroy() {
+		new Sound().explosionsound();
 		this.destructionCooldown.reset();
+
+		new Sound().explosionsound();
 	}
 
 	/**
@@ -168,6 +186,22 @@ public class Ship extends Entity {
 	}
 
 	/**
+	 * Switches the ship to its item acquired state.
+	 */
+	public final void itemimgGet(){
+		this.itemCooldown.reset();
+	}
+
+	/**
+	 * Checks if the ship acquired an item.
+	 *
+	 * @return True if the ship acquired an item.
+	 */
+	public final boolean isItemimgGet(){
+		return !this.itemCooldown.checkFinished();
+	}
+
+	/**
 	 * Getter for the ship's speed.
 	 * 
 	 * @return Speed of the ship.
@@ -176,12 +210,16 @@ public class Ship extends Entity {
 		return SPEED;
 	}
 
+	public void setSHOOTING_COOLDOWN(int SHOOTING_INTERVAL) {
+		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+	}
+
 	public void setSHOOTING_INTERVAL(int SHOOTING_INTERVAL) {
 		this.SHOOTING_INTERVAL = SHOOTING_INTERVAL;
 	}
 
 	public int getSHOOTING_INTERVAL() {
-		return SHOOTING_INTERVAL;
+		return this.SHOOTING_INTERVAL;
 	}
 
 	public void setSPEED(int SPEED) {
@@ -191,4 +229,5 @@ public class Ship extends Entity {
 	public int getSPEED() {
 		return SPEED;
 	}
+	public int getBULLET_SPEED() {return BULLET_SPEED;}
 }
